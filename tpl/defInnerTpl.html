@@ -1,0 +1,17 @@
+<div id="content">
+    <div ng-window-sectors="header">
+        <h1>{{param.title}}</h1>
+        <a ng-click="close()">Закрыть</a>
+        <a class="nav-prev" ng-show="nav.prev" ng-click="prev()">Назад</a>
+        <a class="nav-next" ng-show="nav.next" ng-click="next()">Вперед</a>
+    </div>
+    <div ng-window-sectors="content">
+        <img src="{{param.src}}" width="{{param.width}}" height="{{param.height}}" alt="" />
+    </div>
+    <div ng-window-sectors="footer">
+        <b>{{param.description}}</b>
+        <i>{{param.test}}</i>
+        <a ng-click="full()">Полноэкранный режим</a>
+        {{index}} - {{count}}
+    </div>
+</div>

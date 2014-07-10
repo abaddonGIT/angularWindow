@@ -1,0 +1,11 @@
+<div id="content">
+    <div ng-window-sectors="header">
+        <h3>{{param.title}}</h3>
+        <a ng-click="close()">Закрыть</a>
+        <a class="nav-prev" ng-show="nav.prev" ng-click="prev()">Назад</a>
+        <a class="nav-next" ng-show="nav.next" ng-click="next()">Вперед</a>
+    </div>
+    <div ng-window-sectors="content">
+        {{param.title}} - {{param.id}}
+    </div>
+</div>
