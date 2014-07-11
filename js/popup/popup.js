@@ -181,6 +181,7 @@
                         var imageSize = this._getImageSize(scope.param);
                         scope.param.width = imageSize[0];
                         scope.param.height = imageSize[1];
+                        (imageSize[0] < config.minSizes.width) ? (scope.content.width = config.minSizes.width) : (scope.content.width = imageSize[0]);
                     }
                 },
                 _prepareImgContent: function(imgPath) {//подготавливает картинку к выводу
@@ -246,6 +247,7 @@
                         result.height = newSize[1];
                         //Даем добро на ресайз картинки
                         config.imgResize = true;
+                        (newSize[0] < config.minSizes.width) ? (scope.content.width = config.minSizes.width) : (scope.content.width = newSize[0]);
                         modalImageDeferred.resolve(result);
                     }.bind(this);
                     img.onerror = function() {
@@ -292,15 +294,12 @@
                 },
                 _winSize: function() {
                     var pageWidth = w.innerWidth, viewHeight = w.innerHeight, wrap, maxSizes;
-                    //Ширина области контента с учетов боковых отступов
-                    wrap = pageWidth - 2 * config.outPadding;
-
+                    wrap = pageWidth - 2 * config.outPadding;//Ширина области контента с учетов боковых отступов
                     if (scope.fullscreen) {
                         maxSizes = {width: pageWidth, height: viewHeight};
                     } else {
                         maxSizes = config.maxSizes;
                     }
-
                     if (config.resize) {
                         if (wrap < config.minSizes.width) {
                             wrap = config.minSizes.width;
@@ -317,13 +316,9 @@
                     };
                 },
                 _getImageSize: function(item) {
-                    var wrapWidth = scope.content.width, winHeight = scope.inner.height, result = [];
+                    var wrapWidth = scope.content.width, winHeight = scope.inner.height - config.outPadding, result = [];
                     //Желаемые размеры картинки
                     var desiredWidth = wrapWidth, desiredHeight = winHeight - (config.margin * 2 + config.padding * 2);
-
-                    if (item.ratio < 1) {
-                        desiredHeight -= config.outPadding;
-                    }
                     //Проверка на минимальную высоту
                     if (desiredHeight < config.minSizes.height) {
                         desiredHeight = config.minSizes.height;

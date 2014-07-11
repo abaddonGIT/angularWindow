@@ -65,22 +65,42 @@ app.controller("baseController", ['$scope', '$document', '$compile', '$angularWi
         ];
         $scope.images2 = [
             {
-                src: 'img/12.jpg',
+                src: 'img/14.jpg',
                 title: '1 картинка',
                 id: '1'
             },
             {
-                src: 'img/2.jpg',
+                src: 'img/13.jpg',
                 title: '2 картинка',
                 id: '2'
             },
             {
-                src: 'img/3.jpg',
+                src: 'img/22.jpg',
+                title: '1 картинка',
+                id: '1'
+            },
+            {
+                src: 'img/33.jpg',
+                title: '2 картинка',
+                id: '2'
+            },
+            {
+                src: 'img/44.jpg',
+                title: '3 картинка',
+                id: '3'
+            },
+            {
+                src: 'img/55.jpg',
+                title: '3 картинка',
+                id: '3'
+            },
+            {
+                src: 'img/66.jpg',
                 title: '3 картинка',
                 id: '3'
             }
         ];
-        
+
         $scope.data = [
             {
                 title: '1 картинка',
@@ -130,7 +150,7 @@ app.controller("baseController", ['$scope', '$document', '$compile', '$angularWi
                 tpl: "tpl/defInnerTpl.html"
             }).then(function(obj) {//Тут я сам могу сделать вывод какой мне хочется, окно будет ждать пока я не закончу
                 //obj.config.target = $scope.data;
-                $http({'url': 'test.php', 'method': 'post'}).success(function (data) {
+                $http({'url': 'test.php', 'method': 'post'}).success(function(data) {
                     obj.config.target.push(data);
                     obj.goOn();
                 });
@@ -141,7 +161,7 @@ app.controller("baseController", ['$scope', '$document', '$compile', '$angularWi
                 });
             });
         };
-        
+
         $scope.openFour = function() {
             $angularWindow.open({
                 controllerScope: $scope,
