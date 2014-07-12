@@ -7,6 +7,7 @@
  * Description: Open popup window
  */
 (function(an, w, d) {
+    "use strict";
     var anWin = an.module('angularWindow', []);
     anWin.value("$sectors", {});
     anWin.directive("ngWindowSectors", ['$sectors', function($sectors) {
@@ -23,21 +24,13 @@
                         '</div>' +
                         '</div><div ng-window-sectors="fullScreen" ng-show="fullscreen"></div>',
                 link: function(scope, elem, attr) {
-                    //Пробрасываем scope в фабрику
                     $angularWindow.sharing(scope);
                 }
             };
         }]);
     anWin.factory('$angularWindow', ['$rootScope', '$templateCache', '$sectors', '$q', '$http', '$compile', '$timeout', function(
-                $rootScope,
-                $templateCache,
-                $sectors,
-                $q,
-                $http,
-                $compile,
-                $timeout) {
-            var scope, config, interval, currIndex, delay, defer = $q.defer(), that;
-
+                $rootScope, $templateCache, $sectors, $q, $http, $compile, $timeout) {
+            var scope, config, interval, currIndex = 0, delay, defer = $q.defer(), that;
             var AngularWindow = function(options) {
                 if (!(this instanceof AngularWindow)) {
                     return new AngularWindow(options);
@@ -59,6 +52,7 @@
                         resize: true,
                         resizeDelay: 20,
                         paginate: 1,
+                        infPaginate: true,
                         ready: false,
                         pathAttr: 'src',
                         tplMark: options.tpl.replace(/[\/,\.]/g, '__'),
@@ -72,8 +66,8 @@
                             height: 480
                         }
                     }, options);
-
-                    if (config.target.length === 1) {
+                    that.targetCount = config.target.length;
+                    if (that.targetCount === 1) {
                         config.paginate = 0;
                     }
                     return config;
@@ -96,8 +90,9 @@
                     }).then(function() {
                         configDefer.resolve({'instance': that, 'config': config, 'goOn': that.goOn, 'sectors': $sectors, 'scope': scope});
                     }).then(function() {
-                        if (!config.target.length) {
+                        if (!that.targetCount) {
                             waitingDefer.promise.then(function() {
+                                that.targetCount = config.target.length;
                                 return that._open();
                             });
                         } else {
@@ -108,13 +103,12 @@
 
                 return configDefer.promise;
             };
-
             AngularWindow.prototype = {
                 _open: function(index) {//Открытие окна
                     currIndex = (index === undefined) ? config.startIndex : index;
                     this._defVar();
                     an.extend(scope.param, config.myParams);
-                    if (config.target.length) {//Проверяем передана ли цель
+                    if (that.targetCount) {//Проверяем передана ли цель
                         var imgPath = config.target[currIndex][config.pathAttr];
                         an.extend(scope.param, config.target[currIndex]);
                         if (imgPath) {//Проверяем картинки ли это
@@ -127,32 +121,35 @@
                     }
                 },
                 _navigate: function(type) {
-                    var index;
+                    var index, future;
                     switch (type) {
                         case 'prev':
-                            index = currIndex - 1;
+                            future = currIndex - 1;
+                            index = (future < 0) ? (that.targetCount - 1) : future;
                             break;
                         case 'next':
-                            index = currIndex + 1;
+                            future = currIndex + 1;
+                            index = (future === that.targetCount) ? 0 : future;
                             break;
                     }
                     ;
                     $sectors.wrap.removeClass("win-show").addClass("win-close");
                     $timeout(function() {
-                        this.trigger("beforePagination", this.config, currIndex, index);
+                        this.trigger("beforePagination", config, currIndex, index, $sectors);
                         this._open(index);
                     }.bind(this), 600);
                 },
                 _baseFunction: function() {//Стандартные ф-и доступные в шаблоне окна
-                    scope.close = function() {
+                    scope.close = that.close = function() {
+                        that.trigger("beforeClose", config, $sectors);
                         scope.show = false;
                         an.element(d.body).css('overflow', 'auto');
                         $sectors.wrap.removeClass("win-show").addClass("win-close");
                     };
-                    scope.prev = function() {
+                    scope.prev = that.prev = function() {
                         that._navigate('prev');
                     };
-                    scope.next = function() {
+                    scope.next = that.next = function() {
                         that._navigate('next');
                     };
                 },
@@ -186,7 +183,7 @@
                 },
                 _prepareImgContent: function(imgPath) {//подготавливает картинку к выводу
                     this._loadImg(imgPath).then(function(result) {
-                        that.trigger("beforeOpen", config, result);
+                        that.trigger("beforeOpen", config, result, $sectors);
                         an.extend(scope.param, result);
                         scope.show = true;
                     }).then(function() {
@@ -194,12 +191,12 @@
                     }).then(function() {
                         return that._checkPag();
                     }).then(function() {
-                        that.trigger("afterOpen", this);
+                        that.trigger("afterOpen", config, $sectors);
                     });
                 },
                 _prepareContent: function() {
                     var prepare = function() {
-                        that.trigger("beforeOpen", config);
+                        that.trigger("beforeOpen", config, $sectors);
                         scope.show = true;
                     };
                     $q.when(prepare()).then(function() {
@@ -218,16 +215,24 @@
                 },
                 _checkPag: function() {
                     //Проверка надо ли показывать кнопки для пагинации
-                    if (config.paginate && config.target.length) {
-                        var count = config.target.length;
-                        if (count === 1) {
-                            scope.nav = {prev: false, next: false};
-                        } else if (currIndex === 0) {
-                            scope.nav = {prev: false, next: true};
-                        } else if (currIndex === count - 1) {
-                            scope.nav = {prev: true, next: false};
+                    if (config.paginate && that.targetCount) {
+                        var count = that.targetCount;
+                        if (!config.infPaginate) {
+                            if (count === 1) {
+                                scope.nav = {prev: false, next: false};
+                            } else if (currIndex === 0) {
+                                scope.nav = {prev: false, next: true};
+                            } else if (currIndex === count - 1) {
+                                scope.nav = {prev: true, next: false};
+                            } else {
+                                scope.nav = {prev: true, next: true};
+                            }
                         } else {
-                            scope.nav = {prev: true, next: true};
+                            if (count === 1) {
+                                scope.nav = {prev: false, next: false};
+                            } else {
+                                scope.nav = {prev: true, next: true};
+                            }
                         }
                     }
                 },
