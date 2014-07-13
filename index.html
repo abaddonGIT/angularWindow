@@ -51,121 +51,108 @@
         </style>
     </head>
     <body ng-controller="baseController">
-        <!--<div class="other-calls">
-            <h3 class="title">Просто открыть картинку</h3>
+        <div class="other-calls">
+            <h3 class="title">Пример модального окна для просмотра картинок</h3>
             <pre>
-$popupWindow.open({
-    target: elem
-});
-            </pre>
-            <a href="img/1.jpg" ng-click="open($event)" id="test1">
-                <img src="img/1.jpg" alt="" width="150" />
-            </a>
-            <a href="img/16.jpg" ng-click="open($event)" id="test2">
-                <img src="img/16.jpg" alt="" width="150" />
-            </a>
-            <h3 class="title">Открытие картинки из аттрибута</h3>
-            <pre>
-$popupWindow.open({
-    target: elem,
-    source: "data-img"
-});
-            </pre>
-            <div class="attr" data-img="img/13.jpg" ng-click="open($event)">Открыть</div>
-            <h3 class="title">Вызов картинки без передачи элемента</h3>
-            <pre>
-var el = $document[0].querySelector('.no-elem');
-    angular.element(el).on('click', function () {
-        $popupWindow.open({
-            type: 'inline',
-            href: 'tpl/test.html',
-            innerTpl: 'tpl/inlineTpl.html',
-            requestParam: {
-                title: "Без элемента"
-            }
+$scope.images = [
+    {
+        src: 'img/14.jpg',
+        title: '1 картинка',
+        id: '1'
+    },
+    {
+        src: 'img/13.jpg',
+        title: '2 картинка',
+        id: '2'
+    },
+    {
+        src: 'img/22.jpg',
+        title: '1 картинка',
+        id: '1'
+    },
+    {
+        src: 'img/33.jpg',
+        title: '2 картинка',
+        id: '2'
+    },
+    {
+        src: 'img/44.jpg',
+        title: '3 картинка',
+        id: '3'
+    },
+    {
+        src: 'img/55.jpg',
+        title: '3 картинка',
+        id: '3'
+    },
+    {
+        src: 'img/66.jpg',
+        title: '3 картинка',
+        id: '3'
+    }
+];
+$scope.open = function(e) {
+    $angularWindow.open({
+        target: $scope.images,
+        controllerScope: $scope,
+        pathAttr: 'src',
+        tpl: "tpl/defInnerTpl.html"
+    }).then(function(obj) {
+        obj.instance.bind("afterOpen", function() {
+            console.log("после открытия");
         });
     });
+}
             </pre>
-            <a class="no-elem">Вызвать окно не передавая элемент</a>
-            <h3>ajax json</h3>
-            <pre>
-$popupWindow.open({
-    target: elem,
-    type: 'ajax',
-    pushState: true,
-    ajax: {
-        method: 'get'
-    },
-    requestParam: {
-        id: elem.getAttribute('img')
-    },
-    beforeContentLoaded: function (eventName, win, sectors) {
-        win.requestParam.title = "Заголовок был сменен в событии beforeContentLoaded";
-    },
-    innerTpl: 'tpl/ajaxJsonTpl.html'
-});
-            </pre>
-            <a href="test.php" class="ajax" ng-click="open($event)" id="win_first" img="2">Подгрузить через ajax (json)</a>
-            <h3>ajax html</h3>
-            <pre>
-$popupWindow.open({
-    target: elem,
-    type: 'ajax',
-    innerTpl: 'tpl/ajaxHtmlTpl.html'
-});            
-            </pre>
-            <a href="test2.php" class="ajaxhtml" ng-click="open($event)">Подгрузить через ajax (html)</a>
+            <a ng-click="open($event)">Открыть окно просмотра</a>
         </div>
-        <div class="image-list">
-            <h3 class="title">Вызов с типом image</h3>
+        <div class="other-calls">
+            <h3>Пример модального окна</h3>
             <pre>
-$popupWindow.open({
-    target: elem,
-    type: 'image',
-    pushState: true,
-    source: 'data-src',
-    beforeContentLoaded: function (eventName, win, sectors) {
-        win.requestParam = {
-            title: "Заголовок был сменен в событии beforeContentLoaded"
-        };
-    }
-});
-            </pre>-->
-            <!--Коллекция картинок-->
-            <!--<ul id="firstCol" style="float: left;">
-                <li ng-repeat="item in images" class="list" data-src="{{item.src}}" ng-group="fantasy" ng-click="open($event)" id="img_{{item.id}}">
-                    <img src="{{item.src}}" width="180" alt="" />
-                </li>
-            </ul>
-        </div>
-        <div class="image-list">
-            <h3 class="title">Вызов с типом ajax</h3>
-            <pre>
-$popupWindow.open({
-    target: elem,
-    type: 'ajax',
-    href: 'test.php',
-    pushState: true,
-    requestParam: {
-        id: elem.getAttribute('img')
-    },
-    beforePagination: function (eventName, win, sectors, elem) {
-        win.requestParam = {
-            id: elem.target[0].getAttribute('img')
-        };
-    }
-});
+$scope.openFree = function() {
+    $angularWindow.open({
+        controllerScope: $scope,
+        tpl: "tpl/defInnerTpl.html"
+    }).then(function(obj) {
+        $http({'url': 'test.php', 'method': 'post'}).success(function(data) {
+            obj.config.target.push(data);
+            obj.goOn();
+        });
+        return obj.instance;
+    }).then(function(win) {
+        win.bind("afterOpen", function() {
+            console.log("после открытия");
+        });
+    });
+};
             </pre>
-            <ul>
-                <li ng-repeat="item in images" class="ajaxlist" ng-group="ajaxfantasy" ng-click="open($event)" id="img_ajax_{{item.id}}" img="{{item.id}}">
-                    <img src="{{item.src}}" width="180" alt="" />
-                </li>
-            </ul>
-        </div>-->
-        <a ng-click="open($event)">открыть</a>
-        <a ng-click="openTwo($event)">открыть №2</a>
-        <a ng-click="openFree($event)">открыть №3</a>
-        <a ng-click="openFour($event)">открыть №4</a>
+            <a ng-click="openFree($event)">Открыть окно просмотра</a>
+        </div>
+        <div class="other-calls">
+            <h3>Пример модального окна (Картинки + контент полученный через запрос)</h3>
+            <pre>
+$scope.openFour = function() {
+    $angularWindow.open({
+        controllerScope: $scope,
+        tpl: "tpl/inlineTpl.html"
+    }).then(function(obj) {
+        $http.get("tpl/ajaxHtmlTpl.html").success(function(tpl) {
+            obj.config.target = $scope.images;
+            obj.sectors['content'].html(tpl);
+            var content = obj.sectors['content'].contents();
+            $compile(content)(obj.scope);
+            obj.goOn();
+        });
+        return obj.instance;
+    }).then(function(win) {
+        win.bind("afterOpen", function() {
+            console.log("после открытия");
+        });
+    });
+};
+            </pre>
+            <a ng-click="openFour($event)">Открыть окно просмотра</a>
+        </div>
         <script src="js/libs/angular/angular.min.js"></script>
         <script src="js/popup/popup.js"></script>
         <script src="js/main.js"></script>

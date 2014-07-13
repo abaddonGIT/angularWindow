@@ -107,7 +107,7 @@
                 _open: function(index) {//Открытие окна
                     currIndex = (index === undefined) ? config.startIndex : index;
                     this._defVar();
-                    an.extend(scope.param, config.myParams);
+                    an.extend(scope.param, {'count': that.targetCount, 'index': currIndex + 1}, config.myParams);
                     if (that.targetCount) {//Проверяем передана ли цель
                         var imgPath = config.target[currIndex][config.pathAttr];
                         an.extend(scope.param, config.target[currIndex]);
