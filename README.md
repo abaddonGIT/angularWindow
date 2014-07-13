@@ -219,7 +219,7 @@ app.controller("baseController", ['$scope', '$angularWindow', function ($scope, 
         Parameters:
         <ul>
             <li>
-                <b>target</b> - массив объектов для вывода в окне;
+                <b>target</b> - the array of objects for a conclusion in a window;
                 <pre>
 $scope.images = [
     {
@@ -239,7 +239,7 @@ $scope.images = [
     }
 ]
 </pre>
-Если параметр не передан, то окно будет ожидать, пока <b>target</b> не будет задан, или пока пользователь сам не даст команду на открытие.
+If parameter isn't transferred, the window will expect while by <b>target</b> it won't be set or while the user himself won't give command on opening.
 <pre>
 $scope.openFree = function() {
     $angularWindow.open({
