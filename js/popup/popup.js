@@ -39,8 +39,7 @@
                 var configDefer = $q.defer(), waitingDefer = $q.defer();
                 that = this;
                 //Ждем получения скопа из директивы
-                defer.promise.then(function(sc) {
-                    scope = sc;
+                defer.promise.then(function() {
                     config = an.extend(that.config, {
                         timestamp: Date.now(),
                         target: [],
@@ -175,13 +174,16 @@
                     scope.inner.height = newSize.viewHeight;
                     if (config.resize) {
                         scope.content.width = newSize.wrap;
-                        var imageSize = this._getImageSize(scope.param);
-                        scope.param.width = imageSize[0];
-                        scope.param.height = imageSize[1];
-                        (imageSize[0] < config.minSizes.width) ? (scope.content.width = config.minSizes.width) : (scope.content.width = imageSize[0]);
+                        if (!that.noImage) {
+                            var imageSize = this._getImageSize(scope.param);
+                            scope.param.width = imageSize[0];
+                            scope.param.height = imageSize[1];
+                            (imageSize[0] < config.minSizes.width) ? (scope.content.width = config.minSizes.width) : (scope.content.width = imageSize[0]);
+                        }
                     }
                 },
                 _prepareImgContent: function(imgPath) {//подготавливает картинку к выводу
+                    that.noImage = false;
                     this._loadImg(imgPath).then(function(result) {
                         that.trigger("beforeOpen", config, result, $sectors);
                         an.extend(scope.param, result);
@@ -195,11 +197,12 @@
                     });
                 },
                 _prepareContent: function() {
+                    that.noImage = true;
                     var prepare = function() {
-                        that.trigger("beforeOpen", config, $sectors);
                         scope.show = true;
                     };
                     $q.when(prepare()).then(function() {
+                        that.trigger("beforeOpen", config, $sectors);
                         return that._openEffect();
                     }).then(function() {
                         return that._checkPag();
@@ -344,8 +347,9 @@
                 open: function(options) {
                     return AngularWindow(options);
                 },
-                sharing: function(scope) {
-                    defer.resolve(scope);
+                sharing: function(sc) {
+                    scope = sc;
+                    defer.resolve();
                 }
             };
         }]);
