@@ -103,6 +103,7 @@
                         $timeout(function () {
                             scope.$destroy();
                             winElement.remove();
+                            winElement = null;
                             that = null;
                         }, 0);
                     });
@@ -249,6 +250,7 @@
                     config.imgResize = true;
                     (newSize[0] < config.minSizes.width) ? (scope.content.width = config.minSizes.width) : (scope.content.width = newSize[0]);
                     modalImageDeferred.resolve(result);
+                    img = null;
                 }.bind(this);
                 img.onerror = function () {
                     modalImageDeferred.reject(this);
