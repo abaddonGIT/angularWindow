@@ -37,6 +37,7 @@
                 effect: 1,
                 outPadding: 150,
                 startIndex: 0,
+                preloderHTML: "<div class='halo1'></div><div class='halo2'></div>",
                 resize: true,
                 resizeDelay: 20,
                 paginate: 1,
@@ -60,7 +61,7 @@
             this._createElem = function () {/*создаем элемент окна*/
                 var add = function () {
                     winElement = an.element('<div class="window">' +
-                        '<div id="window-wrap" ng-show="show"></div>' +
+                        '<div id="window-wrap" ng-show="fixedShow"><div ng-window-sectors="fixedplace" ng-show="preloader"></div></div>' +
                         '<div ng-show="show" id="wrap-inner" ng-style="{width:inner.width + \'px\', height:inner.height + \'px\', padding:inner.padding}">' +
                         '<div id="wrap-block" ng-window-sectors="wrap" class="win-close" ng-hide="fullscreen" ng-style="{width: content.width + \'px\', padding: content.padding + \'px\'}">' +
                         '</div>' +
@@ -73,6 +74,7 @@
                 return $q.when(add());
             };
             this._loadTpl = function (tpl, name) {/*загружает шаблон окна*/
+                this._setPreloader();
                 if (!name) {
                     name = 'tpl';
                 }
@@ -91,12 +93,18 @@
                     });
                 }
             };
+            this._setPreloader = function () {
+                var place = $sectors['fixedplace'];
+                if (config.preloderHTML) {
+                    $sectors['fixedplace'].html(config.preloderHTML);
+                }
+            },
             this._baseFunction = function () {/*Стандартные ф-и доступные в шаблоне окна*/
-                scope.close = function () {
+                scope.close = that.close = function () {
                     that.trigger("beforeClose", config, $sectors);
                     $sectors.wrap.removeClass("win-show").addClass("win-close");
                     $timeout(function () {
-                        scope.show = false;
+                        scope.show = scope.fixedShow = false;
                         an.element(d.body).css('overflow', 'auto');
                         w.removeEventListener("resize", that._changeSize, false);
                     }, 600).then(function () {
@@ -114,6 +122,7 @@
                 scope.next = function () {
                     that._navigate('next');
                 };
+                scope.fixedShow = scope.preloader = true;
             };
             this._open = function (index) {/*Открытие окна*/
                 currIndex = (index === undefined) ? config.startIndex : index;
@@ -130,6 +139,7 @@
                 } else {/*Тут обычное окно с контентом*/
                     this._prepareContent();
                 }
+                scope.preloader = false;
             };
             this._navigate = function (type) {
                 var index, future;
@@ -143,6 +153,7 @@
                         index = (future === that.targetCount) ? 0 : future;
                         break;
                 }
+                scope.preloader = true;
                 $sectors.wrap.removeClass("win-show").addClass("win-close");
                 $timeout(function () {
                     this.trigger("beforePagination", config, currIndex, index, $sectors);

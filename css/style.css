@@ -237,3 +237,118 @@ a {
     float: right;
     cursor: pointer;
 }
+/*Стандартный прелодер*/
+.halo1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0,0,0,0);
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 0 15px #ccc;
+    -webkit-animation: size 1s infinite alternate;
+    -moz-animation: size 1s infinite alternate;
+    -o-animation: size 1s infinite alternate;
+    -ms-animation: size 1s infinite alternate;
+    animation: size 1s infinite alternate;
+}
+
+.halo2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 0 15px #ccc;
+    background-color: rgba(0,0,0,0);
+    -webkit-animation: size2 1s infinite alternate;
+    -moz-animation: size2 1s infinite alternate;
+    -o-animation: size2 1s infinite alternate;
+    -ms-animation: size2 1s infinite alternate;
+    animation: size2 1s infinite alternate;
+}
+
+@-webkit-keyframes size {
+    from {
+        -webkit-transform: scale(0.3);
+    }
+    to {
+        -webkit-transform: scale(1);
+    }
+}
+@-moz-keyframes size {
+    from {
+        -moz-transform: scale(0.3);
+    }
+    to {
+        -moz-transform: scale(1);
+    }
+}
+@-o-keyframes size {
+    from {
+        -o-transform: scale(0.3);
+    }
+    to {
+        -o-transform: scale(1);
+    }
+}
+@-ms-keyframes size {
+    from {
+        -ms-transform: scale(0.3);
+    }
+    to {
+        -ms-transform: scale(1);
+    }
+}
+@keyframes size {
+    from {
+        transform: scale(0.3);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+@-webkit-keyframes size2 {
+    from {
+        -webkit-transform: scale(1);
+    }
+    to {
+        -webkit-transform: scale(0.3);
+    }
+}
+@-moz-keyframes size2 {
+    from {
+        -moz-transform: scale(1);
+    }
+    to {
+        -moz-transform: scale(0.3);
+    }
+}
+@-o-keyframes size2 {
+    from {
+        -o-transform: scale(1);
+    }
+    to {
+        -o-transform: scale(0.3);
+    }
+}
+@-ms-keyframes size2 {
+    from {
+        -ms-transform: scale(1);
+    }
+    to {
+        -ms-transform: scale(0.3);
+    }
+}
+@keyframes size2 {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(0.3);
+    }
+}
