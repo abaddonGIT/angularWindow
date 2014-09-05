@@ -99,31 +99,31 @@
                     $sectors['fixedplace'].html(config.preloderHTML);
                 }
             },
-            this._baseFunction = function () {/*Стандартные ф-и доступные в шаблоне окна*/
-                scope.close = that.close = function () {
-                    that.trigger("beforeClose", config, $sectors);
-                    $sectors.wrap.removeClass("win-show").addClass("win-close");
-                    $timeout(function () {
-                        scope.show = scope.fixedShow = false;
-                        an.element(d.body).css('overflow', 'auto');
-                        w.removeEventListener("resize", that._changeSize, false);
-                    }, 600).then(function () {
+                this._baseFunction = function () {/*Стандартные ф-и доступные в шаблоне окна*/
+                    scope.close = that.close = function () {
+                        that.trigger("beforeClose", config, $sectors);
+                        $sectors.wrap.removeClass("win-show").addClass("win-close");
                         $timeout(function () {
-                            scope.$destroy();
-                            winElement.remove();
-                            winElement = null;
-                            that = null;
-                        }, 0);
-                    });
+                            scope.show = scope.fixedShow = false;
+                            an.element(d.body).css('overflow', 'auto');
+                            w.removeEventListener("resize", that._changeSize, false);
+                        }, 600).then(function () {
+                            $timeout(function () {
+                                scope.$destroy();
+                                winElement.remove();
+                                winElement = null;
+                                that = null;
+                            }, 0);
+                        });
+                    };
+                    scope.prev = function () {
+                        that._navigate('prev');
+                    };
+                    scope.next = function () {
+                        that._navigate('next');
+                    };
+                    scope.fixedShow = scope.preloader = true;
                 };
-                scope.prev = function () {
-                    that._navigate('prev');
-                };
-                scope.next = function () {
-                    that._navigate('next');
-                };
-                scope.fixedShow = scope.preloader = true;
-            };
             this._open = function (index) {/*Открытие окна*/
                 currIndex = (index === undefined) ? config.startIndex : index;
                 this._defVar();
@@ -139,7 +139,6 @@
                 } else {/*Тут обычное окно с контентом*/
                     this._prepareContent();
                 }
-                scope.preloader = false;
             };
             this._navigate = function (type) {
                 var index, future;
@@ -219,6 +218,7 @@
                 an.element(d.body).css('overflow', 'hidden');
                 return $timeout(function () {
                     $sectors.wrap.removeClass("win-close").addClass("win-show");
+                    scope.preloader = false;
                 }, 100);
             };
             this._checkPag = function () {
@@ -287,7 +287,8 @@
             };
             this._winSize = function () {
                 var pageWidth = w.innerWidth, viewHeight = w.innerHeight, wrap, maxSizes;
-                wrap = pageWidth - 2 * config.outPadding;/*Ширина области контента с учетов боковых отступов*/
+                wrap = pageWidth - 2 * config.outPadding;
+                /*Ширина области контента с учетов боковых отступов*/
                 if (scope.fullscreen) {
                     maxSizes = {width: pageWidth, height: viewHeight};
                 } else {
@@ -312,9 +313,12 @@
                 var wrapWidth = scope.content.width, winHeight = scope.inner.height - config.outPadding, result = [];
                 //Желаемые размеры картинки
                 var desiredWidth = wrapWidth, desiredHeight = winHeight - (config.margin * 2 + config.padding * 2);
-                //Проверка на минимальную высоту
-                if (desiredHeight < config.minSizes.height) {
-                    desiredHeight = config.minSizes.height;
+                if (item.oric_height < config.minSizes.height) {//Если высота картинки меньше минимальной, то не ресайзим окно
+                    desiredHeight = item.oric_height;
+                } else {//Проверка на минимальную высоту
+                    if (desiredHeight < config.minSizes.height) {
+                        desiredHeight = config.minSizes.height;
+                    }
                 }
                 if ((item.oric_width / desiredWidth) > (item.oric_height / desiredHeight)) {
                     result[0] = desiredWidth;

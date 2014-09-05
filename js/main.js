@@ -27,7 +27,17 @@ app.controller("baseController", ['$scope', '$document', '$compile', '$angularWi
             id: '3'
         },
         {
+            src: 'img/small-h.jpg',
+            title: '3 картинка',
+            id: '3'
+        },
+        {
             src: 'img/55.jpg',
+            title: '3 картинка',
+            id: '3'
+        },
+        {
+            src: 'img/small-w.jpg',
             title: '3 картинка',
             id: '3'
         },

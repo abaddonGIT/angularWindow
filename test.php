@@ -16,7 +16,7 @@
 
     $outer = array(
         //'items' => array(array('name' => 'hellow'), array('name' => 'hellow2'), array('name' => 'hellow3'))
-        'src' => "img/1.jpg",
+        'src' => "img/small-w.jpg",
         'id' => 1,
         'title' => 'Картинка из json №1',
         'description' => 'amet laoreet.<b></b> Nulla tempus ipsum sed nisl mattis congue. Dui'
