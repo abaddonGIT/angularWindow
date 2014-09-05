@@ -116,6 +116,10 @@
                             }, 0);
                         });
                     };
+                    that.update = function (src) {
+                        config.target[currIndex][config.pathAttr] = src;
+                        that._open();
+                    };
                     scope.prev = function () {
                         that._navigate('prev');
                     };
