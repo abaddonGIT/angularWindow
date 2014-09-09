@@ -317,7 +317,7 @@
                 var wrapWidth = scope.content.width, winHeight = scope.inner.height - config.outPadding, result = [];
                 //Желаемые размеры картинки
                 var desiredWidth = wrapWidth, desiredHeight = winHeight - (config.margin * 2 + config.padding * 2);
-                if (item.oric_height < config.minSizes.height) {//Если высота картинки меньше минимальной, то не ресайзим окно
+                if (item.oric_height <= config.minSizes.height) {//Если высота картинки меньше минимальной, то не ресайзим окно
                     desiredHeight = item.oric_height;
                 } else {//Проверка на минимальную высоту
                     if (desiredHeight < config.minSizes.height) {
