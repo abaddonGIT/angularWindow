@@ -6,6 +6,7 @@
  * Time: 17:15
  * Description: Open popup window
  */
+/*global angular, window, document*/
 (function (an, w, d) {
     "use strict";
     var anWin = an.module('angularWindow', []);
@@ -98,36 +99,36 @@
                 if (config.preloderHTML) {
                     $sectors['fixedplace'].html(config.preloderHTML);
                 }
-            },
-                this._baseFunction = function () {/*Стандартные ф-и доступные в шаблоне окна*/
-                    scope.close = that.close = function () {
-                        that.trigger("beforeClose", config, $sectors);
-                        $sectors.wrap.removeClass("win-show").addClass("win-close");
+            };
+            this._baseFunction = function () {/*Стандартные ф-и доступные в шаблоне окна*/
+                scope.close = that.close = function () {
+                    that.trigger("beforeClose", config, $sectors);
+                    $sectors.wrap.removeClass("win-show").addClass("win-close");
+                    $timeout(function () {
+                        scope.show = scope.fixedShow = false;
+                        an.element(d.body).css('overflow', 'auto');
+                        w.removeEventListener("resize", that._changeSize, false);
+                    }, 600).then(function () {
                         $timeout(function () {
-                            scope.show = scope.fixedShow = false;
-                            an.element(d.body).css('overflow', 'auto');
-                            w.removeEventListener("resize", that._changeSize, false);
-                        }, 600).then(function () {
-                            $timeout(function () {
-                                scope.$destroy();
-                                winElement.remove();
-                                winElement = null;
-                                that = null;
-                            }, 0);
-                        });
-                    };
-                    that.update = function (src) {
-                        config.target[currIndex][config.pathAttr] = src;
-                        that._open();
-                    };
-                    scope.prev = function () {
-                        that._navigate('prev');
-                    };
-                    scope.next = function () {
-                        that._navigate('next');
-                    };
-                    scope.fixedShow = scope.preloader = true;
+                            scope.$destroy();
+                            winElement.remove();
+                            winElement = null;
+                            that = null;
+                        }, 0);
+                    });
                 };
+                that.update = function (src) {
+                    config.target[currIndex][config.pathAttr] = src;
+                    that._open();
+                };
+                scope.prev = function () {
+                    that._navigate('prev');
+                };
+                scope.next = function () {
+                    that._navigate('next');
+                };
+                scope.fixedShow = scope.preloader = true;
+            };
             this._open = function (index) {/*Открытие окна*/
                 currIndex = (index === undefined) ? config.startIndex : index;
                 this._defVar();
