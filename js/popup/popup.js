@@ -202,7 +202,7 @@
                 }).then(function () {
                     return that._checkPag();
                 }).then(function () {
-                    that.trigger("afterOpen", config, $sectors);
+                    that.trigger("afterOpen", config, $sectors, currIndex);
                 });
             };
             this._prepareContent = function () {
@@ -216,7 +216,7 @@
                 }).then(function () {
                     return that._checkPag();
                 }).then(function () {
-                    that.trigger("afterOpen", this);
+                    that.trigger("afterOpen", config, $sectors, currIndex);
                 });
             };
             this._openEffect = function () {
